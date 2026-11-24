@@ -597,9 +597,8 @@ body = f'''<section class="hero" id="accueil">
   <div class="contact-grid">
    <div class="reveal reveal--left">
     <div class="contact-note">
-     <p>Pour toutes questions et réservations, contactez-moi par e-mail ou par SMS.</p>
-     <p class="contact-note__big">Suite à de nombreuses demandes, merci de me contacter par e-mail ou SMS écrit en formulant clairement votre demande, afin que je puisse la traiter le plus rapidement possible.</p>
-     <p>Indiquez : nom et prénom, téléphone, type d’animal, race, âge, formule choisie et durée, adresse. Merci&nbsp;!</p>
+     <p class="contact-note__big">Écrivez-moi par SMS ou par e-mail, je vous réponds rapidement.</p>
+     <p>Précisez : nom et prénom, téléphone, animal (race et âge), formule, dates et adresse. Merci&nbsp;!</p>
     </div>
     <ul class="contact-list">
      <li><a href="sms:{TEL_LINK}"><span class="ci">{icon("i-sms")}</span><span><strong>{TEL}</strong><small>Par SMS écrit uniquement</small></span></a></li>
