@@ -174,6 +174,7 @@
         if (!v || k === "canal") return;
         if (/^\d{4}-\d{2}-\d{2}$/.test(v)) v = v.split("-").reverse().join("/");
         lines.push(k + " : " + v);
+        if (k === "Fin" && form._nbJours) lines.push("Durée : " + form._nbJours);
       });
       return lines.join("\n");
     }
@@ -190,19 +191,43 @@
     });
   }
 
-  /* Calendrier : pas de date passée, fin après le début */
-  var d1 = document.getElementById("f-debut"), d2 = document.getElementById("f-fin");
+  /* Calendrier : pas de date passée, fin le même jour ou après le début, durée affichée */
+  var d1 = document.getElementById("f-debut"), d2 = document.getElementById("f-fin"), duree = document.getElementById("f-duree");
   if (d1 && d2) {
     var now = new Date(), iso = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
-    d1.min = iso; d2.min = iso;
+    var maxIso = (Number(iso.slice(0, 4)) + 2) + iso.slice(4);
+    var jour = function (v) { var p = v.split("-"); return Date.UTC(+p[0], +p[1] - 1, +p[2]) / 864e5; };
+    var fr = function (v) { return v.split("-").reverse().join("/"); };
+    d1.min = iso; d2.min = iso; d1.max = maxIso; d2.max = maxIso;
+
+    function verifier() {
+      var a = d1.value, b = d2.value, m1 = "", m2 = "";
+      if (a && a < iso) m1 = "La date de début ne peut pas être dans le passé.";
+      else if (a && a > maxIso) m1 = "Vérifiez l’année de la date de début.";
+      if (b && b < iso) m2 = "La date de fin ne peut pas être dans le passé.";
+      else if (b && b > maxIso) m2 = "Vérifiez l’année de la date de fin.";
+      else if (a && b && b < a) m2 = "La date de fin doit être le même jour que la date de début, ou après.";
+      d1.setCustomValidity(m1); d2.setCustomValidity(m2);
+      // Le calendrier de fin commence au début choisi
+      d2.min = a && !m1 ? a : iso;
+      var n = a && b && !m1 && !m2 ? jour(b) - jour(a) + 1 : 0;
+      form && (form._nbJours = n ? n + (n > 1 ? " jours" : " jour") : "");
+      if (duree) {
+        duree.hidden = !n;
+        duree.textContent = n ? "Garde du " + fr(a) + " au " + fr(b) + " : " + n + (n > 1 ? " jours." : " jour.") : "";
+      }
+    }
     [d1, d2].forEach(function (el) {
       el.addEventListener("click", function () { if (el.showPicker) { try { el.showPicker(); } catch (e) {} } });
+      el.addEventListener("input", verifier);
+      el.addEventListener("change", verifier);
     });
     d1.addEventListener("change", function () {
-      d2.min = d1.value || iso;
-      if (d2.value && d2.value < d1.value) d2.value = d1.value;
+      // Début déplacé après la fin : on vide la fin pour la choisir à nouveau
+      if (d1.value && d2.value && d2.value < d1.value) { d2.value = ""; verifier(); }
       if (d1.value && !d2.value && d2.showPicker) { try { d2.showPicker(); } catch (e) {} }
     });
+    verifier();
   }
 
   /* Année du pied de page */
