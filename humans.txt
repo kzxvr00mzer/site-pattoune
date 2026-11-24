@@ -1,0 +1,7 @@
+/* EQUIPE */
+Site : Pattoune chez soi, pet sitter à Pau
+Réalisation : Kevin Ly
+
+/* SITE */
+Mise à jour : 2026-11-24
+Déploiement : GitHub → OVH (intégration Git)
